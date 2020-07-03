@@ -5,6 +5,7 @@ function moviesApi(app){
   const router = express.Router()
   app.use("/api/movies", router)
 
+
   router.get("/", async function(req, res, next){
     try {
       const movies = await Promise.resolve(moviesMock)
