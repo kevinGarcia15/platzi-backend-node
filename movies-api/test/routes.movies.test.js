@@ -17,13 +17,30 @@ describe('routes - movies', function () {
 
     it('should respond with list of movies', function (done) {
       request.get('/api/movies').end((err, res) => {
-        //compara los datos que trajo del servidor, con los datos que están  en el servidor
+        //compara los datos que trajo del servidor, con los datos que estamos pasando
         assert.deepEqual(res.body, {
           data: moviesMock,
-          message: 'muvies listed'
+          message: 'muvies listed',
         });
 
-        done()
+        done();
+      });
+    });
+  });
+
+  describe('POST /movies/', function () {
+    it('Should respond with status 201', function (done) {
+      request.post('/api/movies').expect(201, done);
+    });
+
+    it('Should respond with the movie created id', function (done) {
+      request.post('/api/movies/').end((err, res) => {
+        assert.deepEqual(res.body, {
+          data: moviesMock[0].id,
+          message: 'muvie created',
+        });
+
+        done();
       });
     });
   });

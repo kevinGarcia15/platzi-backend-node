@@ -6,7 +6,14 @@ const {
   updateMovieSchema,
 } = require('../utils/schemas/movies.js');
 const validationHandler = require('../utils/middleware/validationHandler.js');
-const joi = require('@hapi/joi')
+const joi = require('@hapi/joi');
+
+//traer nuestas utilidades de cacheResponse
+const cacheResponse = require('../utils/cacheResponse.js');
+const {
+  FIVE_MINUTES_IN_SECONDS,
+  SIXTY_MINUTES_IN_SECONDS,
+} = require('../utils/time.js');
 
 function moviesApi(app) {
   const router = express.Router();
@@ -14,6 +21,8 @@ function moviesApi(app) {
   const moviesServices = new MoviesServices(); //se traen todos los metodos del servicio
 
   router.get('/', async function (req, res, next) {
+    cacheResponse(res, FIVE_MINUTES_IN_SECONDS); //agegamos el cache
+
     const { tags } = req.query;
     try {
       const movies = await moviesServices.getMovies({ tags });
@@ -30,10 +39,11 @@ function moviesApi(app) {
     '/:movieId',
     validationHandler(joi.object({ movieId: movieIdSchema }), 'params'),
     async function (req, res, next) {
+      cacheResponse(res, SIXTY_MINUTES_IN_SECONDS); //agegamos el
       const { movieId } = req.params;
       try {
         const movies = await moviesServices.getMovie({ movieId });
-        console.log('movies listed')
+        console.log('movies listed');
         res.status(200).json({
           data: movies,
           message: 'muvie retrived', //recuperar
